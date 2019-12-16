@@ -9,6 +9,6 @@ int main()
 {
 	string name;
 	cin >> name;	
-	cout << name << "ÖÐÇï¿ìÀÖ£¡" << endl ;
+	cout << name << "ä¸­ç§‹å¿«ä¹" << endl ;
 	return 0;
 } 

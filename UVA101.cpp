@@ -1,63 +1,60 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-//#define MYDEBUG
-#ifdef MYDEBUG  
-#define debug(...) printf(##__VA_ARGS__)  
+//#define DEBUG
+#ifdef DEBUG  
+#define debug(fmt, ...) printf(fmt, ##__VA_ARGS__)  
 #else  
-#define debug(...)  
+#define debug(fmt, ...)  
 #endif 
 
 char opt[10], opt2[10];
 int a, b;
-
 int n;
-struct Block {
-	int dest;
-	vector<int> vec;
-};
 
-Block  block[30];
-
+vector<int> block[30];
+int	dest[30];
+int high[30];
+ 
 void moveback(int a)
 {
-	int ad, c;
+	int d, h, c, i, len;
 
-	ad = block[a].dest;
+	d = dest[a];
+	h = high[a];
+	len = block[d].size();
+	for(i = h + 1; i < len; i++) {
+		c = block[d][i];
 
-	for(int i = block[ad].vec.size() - 1; i>=0; i--) {
-		c = block[ad].vec[i];
-		if(c == a)
-			break;
-
-		block[c].vec.push_back(c);
-		block[c].dest = c;
-		block[ad].vec.pop_back();
+		high[c] = block[c].size();
+		dest[c] = c;
+		block[c].push_back(c);
 		debug("%d -> %d\n", c, c);
 	}
+	
+	block[d].resize(h + 1);
 }
 
 void move(int a, int b)
 {
-	int i, idx, c;
-	int ad;
+	int i, h, c;
+	int d, len;
+
+	d = dest[a];
+	h = high[a];
+	len = block[d].size();
+	b = dest[b];
 	
-	ad = block[a].dest;
-	
-	for(i = 0; i < block[ad].vec.size(); i++) {
-		if(block[ad].vec[i] == a)
-			break;
+	for(i = h;	i < len; i++) {
+		c = block[d][i];
+		
+		high[c] = block[b].size();
+		dest[c] = b;
+		block[b].push_back(c);
+		debug("%d -> %d\n", c,                                                                                                         b);
 	}
 	
-	idx = i;
-	for(; i < block[ad].vec.size(); i++) {
-		c = block[ad].vec[i];
-		block[b].vec.push_back(c);
-		block[c].dest = b;
-		debug("%d -> %d\n", c, b);
-	}
-	
-	block[ad].vec.resize(idx);
+	block[d].resize(h);
 }
 
 int main()
@@ -66,8 +63,9 @@ int main()
 	
 	int i;
 	for(i = 0; i < n; i++) {
-		block[i].vec.push_back(i);
-		block[i].dest = i;
+		block[i].push_back(i);
+		dest[i] = i;
+		high[i] = 0;
 	}
 	
 	while(1) {
@@ -75,24 +73,24 @@ int main()
 		if(strcmp(opt, "quit") == 0)
 			break;
 			
-		scanf("%d%s%d", &a, opt2, &b);
+		scanf("%d %s %d", &a, opt2, &b);
 		debug("%s %d %s %d\n", opt, a, opt2, b);
 		
-		if(block[a].dest == block[b].dest)
+		if(dest[a] == dest[b])
 			continue;
+
 		if(strcmp(opt, "move") == 0) {
+			moveback(a);
 			if(strcmp(opt2, "onto") == 0) {
-				moveback(a);
 				moveback(b);
 			} else {
-				moveback(a);
-				b = block[b].dest;
+				//b = dest[b];
 			}
 		} else {
 			if(strcmp(opt2, "onto") == 0) {
 				moveback(b);
 			} else {
-				b = block[b].dest;
+				//b = dest[b];
 			}
 		}
 		move(a, b);
@@ -101,8 +99,8 @@ int main()
 	int j;
 	for(i = 0; i < n; i++) {
 		printf("%d:", i);
-		for(j = 0; j < block[i].vec.size(); j++) {
-			printf(" %d", block[i].vec[j]);
+		for(j = 0; j < block[i].size(); j++) {
+			printf(" %d", block[i][j]);
 		}
 		printf("\n");
 	}
