@@ -3,16 +3,17 @@ using namespace std;
 
 list <int> slist;
 list <int> ::iterator sit[100006], it;
+int a[100006];
 int n, m;
 
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 void debug()
 {
 	list <int>::iterator it;
 	printf("\ndebug:");
 	for(it = slist.begin(); it != slist.end(); it++) {
-		printf("-%d", *it);
+		printf("<-->%d", *it);
 	}
 	printf("\n");
 }
@@ -31,7 +32,9 @@ int main()
 		if(dir == 0) {
 			it = slist.insert(sit[idx], i);
 		} else {
-			it = slist.insert(++sit[idx], i);
+			it = sit[idx];
+			it++;
+			it = slist.insert(it, i);
 		}
 		sit[i] = it;
 #ifdef DEBUG
@@ -40,11 +43,22 @@ int main()
 	}
 		
 	scanf("%d", &m);
+	
 	for(int i = 0; i < m; i++) {
 		scanf("%d", &idx);
-		slist.erase(sit[idx]);
+		if(a[idx] == 0)
+			slist.erase(sit[idx]);
+		a[idx] = 1;
 	}	
-	
+
+	/*
+	for(int i = 0; i < m; i++) {
+		scanf("%d", &idx);
+		it = find(slist.begin(), slist.end(), idx);
+		if(it != slist.end())
+			slist.erase(it);
+	}	
+	*/
 	for(it = slist.begin(); it != slist.end(); it++) {
 		if(it != slist.begin())
 			printf(" %d", *it);
